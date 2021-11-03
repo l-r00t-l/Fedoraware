@@ -910,7 +910,7 @@ void CWhat::Render(IDirect3DDevice9* pDevice) {
 								ImGui::Checkbox("Chat spam", &Vars::Misc::ChatSpam.m_Var); HelpMarker("Spam the chat with SE-Owned adverts");
 								ImGui::Checkbox("No push", &Vars::Misc::NoPush.m_Var); HelpMarker("Will make teammates unable to push you around");
 								const char* rollModes[]{ "Off", "Backwards", "Fake forward" }; ImGui::PushItemWidth(100); ImGui::Combo("Crouch speed", &Vars::Misc::Roll.m_Var, rollModes, IM_ARRAYSIZE(rollModes)); ImGui::PopItemWidth(); HelpMarker("Allows you to go at normal walking speed when crouching (affects many things, use with caution)");
-								ImGui::Checkbox("Show class changes", &Vars::Visuals::ChatInfo.m_Var); HelpMarker("Will say when people change class in chat");
+								ImGui::Checkbox("Show class changes", &Vars::Visuals::ClassChangesLogger.m_Var); HelpMarker("Will say when people change class in chat");
 								ImGui::Checkbox("Vote revealer", &Vars::Misc::VoteRevealer.m_Var); HelpMarker("Will say who voted F1 or F2 in chat");
 								ImGui::Checkbox("Votes to party", &Vars::Misc::VotesInChat.m_Var); HelpMarker("Will send vote information to party chat (use with caution)");
 								const char* logModes[]{ "Off", "Chat", "Text" }; ImGui::PushItemWidth(100); ImGui::Combo("Damage logger", &Vars::Visuals::damageLogger.m_Var, logModes, IM_ARRAYSIZE(logModes)); ImGui::PopItemWidth(); HelpMarker("Will log any damage you deal to players");

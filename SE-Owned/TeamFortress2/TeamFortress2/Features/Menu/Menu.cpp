@@ -1304,7 +1304,7 @@ void CMenu::Run()
 						CheckBox(Vars::Visuals::RemoveZoom, _(L"Remove sniper's scope zoom"));
 						CheckBox(Vars::Visuals::RemovePunch, _(L"Remove visual punch/recoil"));
 						CheckBox(Vars::Visuals::CrosshairAimPos, _(L"Place crosshair at aimbot's aim position"));
-						CheckBox(Vars::Visuals::ChatInfo, _(L"Display enemy class changes on chat"));
+						CheckBox(Vars::Visuals::ClassChangesLogger, _(L"Display enemy class changes on chat"));
 					}
 					GroupBoxEnd(_(L"Local"), 190);
 
