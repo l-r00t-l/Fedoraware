@@ -7,7 +7,7 @@
 class CBaseCombatWeapon : public CBaseEntity
 {
 public: //Netvars
-		M_DYNVARGET(Clip1, int, this, _("DT_BaseCombatWeapon"), _("LocalWeaponData"), _("m_iClip1"))
+	M_DYNVARGET(Clip1, int, this, _("DT_BaseCombatWeapon"), _("LocalWeaponData"), _("m_iClip1"))
 		M_DYNVARGET(Clip2, int, this, _("DT_BaseCombatWeapon"), _("LocalWeaponData"), _("m_iClip2"))
 		M_DYNVARGET(ItemDefIndex, int, this, _("DT_EconEntity"), _("m_AttributeManager"), _("m_Item"), _("m_iItemDefinitionIndex"))
 		M_DYNVARGET(ChargeBeginTime, float, this, _("DT_WeaponPipebombLauncher"), _("PipebombLauncherLocalData"), _("m_flChargeBeginTime"))
@@ -23,26 +23,39 @@ public: //Netvars
 		M_OFFSETGET(Healing, int, 0xC51) //DT_WeaponMedigun -> m_bHealing
 
 			// pretty srue these are all wrong but i have no idea how to do the thing to find out what they are
-		M_OFFSETGET(CritBucket, float, 0xA38)
-		M_OFFSETGET(WeaponSeed, int, 0xB3C)
-		M_OFFSETGET(Unknown1, int, 0xB30)
-		M_OFFSETGET(Unknown2, int, 0xB34)
-		M_OFFSETGET(Unknown3, bool, 0xB17)
-		M_OFFSETGET(Unknown4, float, 0xB40)
-		M_OFFSETGET(CritAttempts, int, 0xA3C)
-		M_OFFSETGET(CritCount, int, 0xA40)
-		M_OFFSETGET(ObservedCritChance, int, 0xBFC)
-		M_OFFSETGET(Unknown7, bool, 0xB18)
-		M_OFFSETGET(WeaponMode, bool, 0xB04)
-		M_OFFSETGET(WeaponDataa, bool, 0xB10)
+		// you add 1c idiot
+		/*
+				*(float*)((uintptr_t)pWeapon + 0xA54) = crit_bucket;
+		*(unsigned int*)((uintptr_t)pWeapon + 0xB58) = weapon_seed;
+		*(unsigned int*)((uintptr_t)pWeapon + 0xB4c) = unknown1;
+		*(unsigned int*)((uintptr_t)pWeapon + 0xB50) = unknown2;
+		*(bool*)((uintptr_t)pWeapon + 0xB33) = unknown3;
+		*(float*)((uintptr_t)pWeapon + 0xB5c) = unknown4;
+		*(int*)((uintptr_t)pWeapon + 0xA58) = crit_attempts;
+		*(int*)((uintptr_t)pWeapon + 0xA5c) = crit_count;
+		*(float*)((uintptr_t)pWeapon + 0xC18) = observed_crit_chance;
+		*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
+		*//*
+		M_OFFSETGET(CritBucket, float, 0xA54)
+		M_OFFSETGET(WeaponSeed, int, 0xB58)
+		M_OFFSETGET(Unknown1, int, 0xB4C)
+		M_OFFSETGET(Unknown2, int, 0xB50)
+		M_OFFSETGET(Unknown3, bool, 0xB33)
+		M_OFFSETGET(Unknown4, float, 0xB5C)
+		M_OFFSETGET(CritAttempts, int, 0xA58)
+		M_OFFSETGET(CritCount, int, 0xA5C)
+		M_OFFSETGET(ObservedCritChance, int, 0xC18)
+		M_OFFSETGET(Unknown7, bool, 0xB34)
+		M_OFFSETGET(WeaponMode, bool, 0xB20)
+		M_OFFSETGET(WeaponDataa, bool, 0xB2C)*/
 
 
 public: //Virtuals
 	M_VIRTUALGET(WeaponID, int, this, int(__thiscall*)(void*), 377)
-	M_VIRTUALGET(Slot, int, this, int(__thiscall*)(void*), 327)
-	M_VIRTUALGET(DamageType, int, this, int(__thiscall*)(void*), 378)
-	M_VIRTUALGET(FinishReload, void, this, void(__thiscall*)(void*), 275)
-	M_VIRTUALGET(BulletSpread, Vec3&, this, Vec3&(__thiscall*)(void*), 286)
+		M_VIRTUALGET(Slot, int, this, int(__thiscall*)(void*), 327)
+		M_VIRTUALGET(DamageType, int, this, int(__thiscall*)(void*), 378)
+		M_VIRTUALGET(FinishReload, void, this, void(__thiscall*)(void*), 275)
+		M_VIRTUALGET(BulletSpread, Vec3&, this, Vec3& (__thiscall*)(void*), 286)
 
 public: //Everything else, lol
 	__inline float GetSmackTime() {
@@ -97,6 +110,17 @@ public: //Everything else, lol
 	__inline bool DoSwingTrace(CGameTrace& Trace) {
 		return GetVFunc<int(__thiscall*)(CGameTrace&)>(this, 453)(Trace);
 	}
+
+	__inline int LookupAttachment(const char* pAttachmentName)
+	{
+		const auto pRend = Renderable();
+		return GetVFunc<int(__thiscall*)(void*, const char*)>(pRend, 35)(pRend, pAttachmentName);
+	}
+
+	__inline bool GetAttachment(int number, Vec3& origin) {
+		return GetVFunc<bool(__thiscall*)(void*, int, Vec3&)>(this, 71)(this, number, origin);
+	}
+
 
 	__inline bool CanFireCriticalShot(const bool bHeadShot) {
 		bool bResult = false;
@@ -184,7 +208,7 @@ public: //Everything else, lol
 		typedef void(__thiscall* EstimateAbsVelocityFn)(decltype(this), CBaseEntity*, Vec3, Vec3*, Vec3*, bool, float);
 		static DWORD dwFn = g_Pattern.Find(_(L"client.dll"), _(L"E8 ? ? ? ? F3 0F 10 46 ? F3 0F 5C 05 ? ? ? ? F3 0F 11 46 ? 5E 5D C2 20 00")) + 0x1;
 		static DWORD dwOffset = ((*(PDWORD)(dwFn)) + dwFn + 0x4);
-		EstimateAbsVelocityFn fn = (EstimateAbsVelocityFn)dwOffset;	
+		EstimateAbsVelocityFn fn = (EstimateAbsVelocityFn)dwOffset;
 		fn(this, pPlayer, vOffset, vSrc, vForward, bHitTeam, flEndDist);
 	}
 
@@ -193,7 +217,7 @@ public: //Everything else, lol
 		typedef bool (*fn_t)(CBaseEntity*);
 		return GetVFunc<fn_t>(pWeapon, 461, 0)(pWeapon);
 	}
-	
+
 	__inline bool CalcIsAttackCriticalHelperNoCrits(CBaseEntity* pWeapon)
 	{
 		typedef bool (*fn_t)(CBaseEntity*);
@@ -215,70 +239,98 @@ public: //Everything else, lol
 	}
 
 	__inline int GetMinigunState() {
-		return *reinterpret_cast<int *>(this + 0xC48);
+		return *reinterpret_cast<int*>(this + 0xC48);
 	}
 };
 
 class weapon_info
 {
 public:
-	float crit_bucket{};
-	unsigned int weapon_seed{};
-	unsigned unknown1{};
-	unsigned unknown2{};
-	bool unknown3{};
-	float unknown4{};
-	int crit_attempts{};
-	int crit_count{};
-	float observed_crit_chance{};
+	float flCritBucket{};
+	int iCurrentSeed{};
+	float flCritEndTime{};
+	float flLastCritCheckTime{};
+	float iLastCritCheckFrame{};
+	int iNumAttacks{};
+	int iNumCrits{};
+	float m_flObservedCritChance{};
 	bool unknown7{};
-	int weapon_mode{};
-	int weapon_data{};
+	//int weapon_mode{};
+	//int weapon_data{};
+	/*
+	
+// Game keeps track of these stats
+struct stats_t
+{
+	float flCritBucket; // A54
+	int   iNumAttacks;  // A58
+	int   iNumCrits;    // A5C
+} stats;
+
+// Memory layout for C_TFWeaponBase
+struct state_t
+{
+	bool  bCurrentAttackIsCrit;
+	bool  bLowered;                  // NETVAR 0xB40
+	int   iAltFireHint;              // 0xB44
+	int   iReloadStartClipAmount;    // 0xB48
+	float flCritEndTime;             // 0xB4C
+	float flLastCritCheckTime;       // NETVAR // 0xB50
+	int   iLastCritCheckFrame;       // 0xB54
+	int   iCurrentSeed;              // 0xB58
+	float flLastCritCheckTimeNoPred; // 0xB5C
+};*/
+
 	void Load(CBaseCombatWeapon* pWeapon)
 	{
-		crit_bucket = pWeapon->GetCritBucket();
-		weapon_seed = pWeapon->GetWeaponSeed();
-		unknown1 = pWeapon->GetUnknown1();
-		unknown2 = pWeapon->GetUnknown2();
-		unknown3 = pWeapon->GetUnknown3();
-		unknown4 = pWeapon->GetUnknown4();
-		crit_attempts = pWeapon->GetCritAttempts();
-		crit_count = pWeapon->GetCritCount();
-		observed_crit_chance = pWeapon->GetObservedCritChance();
-		unknown7 = pWeapon->GetUnknown7();
+		flCritBucket = *(float*)((uintptr_t)pWeapon + 0xA54);//pWeapon->GetCritBucket();
+		iCurrentSeed = *(int*)((uintptr_t)pWeapon + 0xB58);//pWeapon->GetWeaponSeed();
+		flCritEndTime = *(float*)((uintptr_t)pWeapon + 0xB4C);//pWeapon->GetUnknown1();
+		flLastCritCheckTime = *(float*)((uintptr_t)pWeapon + 0xB50); //pWeapon->GetUnknown2();
+		iLastCritCheckFrame = *(int*)((uintptr_t)pWeapon + 0xB54);//pWeapon->GetUnknown4();
+		iNumAttacks = *(int*)((uintptr_t)pWeapon + 0xB58);//pWeapon->GetCritAttempts();
+		iNumCrits = *(int*)((uintptr_t)pWeapon + 0xA5C);//pWeapon->GetCritCount();
+		m_flObservedCritChance = *(float*)((uintptr_t)pWeapon + 0xC1C); // pWeapon->GetObservedCritChance();
+		unknown7 = *(bool*)((uintptr_t)pWeapon + 0xB34);
 
-		weapon_mode = pWeapon->GetWeaponMode();
-		weapon_data = pWeapon->GetWeaponDataa();
+		//weapon_mode = pWeapon->GetWeaponMode();
+		//weapon_data = pWeapon->GetWeaponDataa();
 	}
 	weapon_info(CBaseCombatWeapon* pWeapon)
 	{
 		Load(pWeapon);
 	}
-	void restore_data(CBaseCombatWeapon* pWeapon)
+	void RestoreData(CBaseCombatWeapon* pWeapon)
 	{
-		/*DYNVAR_SET(float, pWeapon, crit_bucket, 0xA38);
-		DYNVAR_SET(int, pWeapon, weapon_seed, 0xA38);
-		DYNVAR_SET(int, pWeapon, unknown1, 0xA38);
-		DYNVAR_SET(int, pWeapon, unknown2, 0xA38);
-		DYNVAR_SET(bool, pWeapon, unknown3, 0xA38);
-		DYNVAR_SET(float, pWeapon, unknown4, 0xA38);
-		DYNVAR_SET(int, pWeapon, crit_attempts, 0xA38);
-		DYNVAR_SET(int, pWeapon, crit_count, 0xA38);
-		DYNVAR_SET(int, pWeapon, observed_crit_chance, 0xA38);
-		DYNVAR_SET(bool, pWeapon, unknown7, 0xA38);
-		DYNVAR_SET(bool, pWeapon, weapon_mode, 0xA38);
-		DYNVAR_SET(bool, pWeapon, weapon_data, 0xA38);*/
+		*(float*)((uintptr_t)pWeapon + 0xA54) = flCritBucket;
+		*(int*)((uintptr_t)pWeapon + 0xB58) = iCurrentSeed;
+		*(float*)((uintptr_t)pWeapon + 0xB4C) = flCritEndTime;
+		*(float*)((uintptr_t)pWeapon + 0xB50) = flLastCritCheckTime;
+		*(float*)((uintptr_t)pWeapon + 0xB5C) = iLastCritCheckFrame;
+		*(int*)((uintptr_t)pWeapon + 0xA58) = iNumAttacks;
+		*(int*)((uintptr_t)pWeapon + 0xA5C) = iNumCrits;
+		*(float*)((uintptr_t)pWeapon + 0xC18) = m_flObservedCritChance;
+		*(bool*)((uintptr_t)pWeapon + 0xB34) = unknown7;
+	}
 
-		*(float*)((uintptr_t)pWeapon + 0xa38) = crit_bucket;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xb3c) = weapon_seed;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xb30) = unknown1;
-		*(unsigned int*)((uintptr_t)pWeapon + 0xb34) = unknown2;
-		*(bool*)((uintptr_t)pWeapon + 0xb17) = unknown3;
-		*(float*)((uintptr_t)pWeapon + 0xb40) = unknown4;
-		*(int*)((uintptr_t)pWeapon + 0xa3c) = crit_attempts;
-		*(int*)((uintptr_t)pWeapon + 0xa40) = crit_count;
-		*(float*)((uintptr_t)pWeapon + 0xbfc) = observed_crit_chance;
-		*(bool*)((uintptr_t)pWeapon + 0xb18) = unknown7;
+	bool operator==(const weapon_info& b) const
+	{
+		return (
+			flCritBucket == b.flCritBucket &&
+			iCurrentSeed == b.iCurrentSeed &&
+			flCritEndTime == b.flCritEndTime &&
+			flLastCritCheckTime == b.flLastCritCheckTime &&
+			iLastCritCheckFrame == b.iLastCritCheckFrame &&
+			iNumAttacks == b.iNumAttacks &&
+			iNumCrits == b.iNumCrits &&
+			m_flObservedCritChance == b.m_flObservedCritChance &&
+			unknown7 == b.unknown7
+			);
+		//return  == B.crit_bucket && weapon_seed == B.weapon_seed && unknown1 == B.unknown1 && unknown2 == B.unknown2 && unknown3 == B.unknown3 && critTime == B.critTime && crit_attempts == B.crit_attempts && crit_count == B.crit_count && observed_crit_chance == B.observed_crit_chance && unknown7 == B.unknown7;
+	}
+	bool operator!=(const weapon_info& B) const
+	{
+		return !(*this == B);
 	}
 };
 

@@ -9,6 +9,8 @@ void __cdecl EngineHook::CL_Move::Hook(float accumulated_extra_samples, bool bFi
 		return oClMove(accumulated_extra_samples, bFinalTick);
 	}
 
+	auto pLocal = g_EntityCache.m_pLocal;
+
 	if (Vars::Misc::CL_Move::TeleportKey.m_Var && (GetAsyncKeyState(Vars::Misc::CL_Move::TeleportKey.m_Var)) && g_GlobalInfo.m_nShifted >= g_GlobalInfo.dtTicks) {
 		while (g_GlobalInfo.m_nShifted != 0) {
 			g_GlobalInfo.m_nShifted--;
@@ -18,12 +20,14 @@ void __cdecl EngineHook::CL_Move::Hook(float accumulated_extra_samples, bool bFi
 		return;
 	}
 
+
+
 	if (GetAsyncKeyState(Vars::Misc::CL_Move::RechargeKey.m_Var)) {
 		g_GlobalInfo.m_bRecharging = true;
 	}
 	if (g_GlobalInfo.m_bRecharging && g_GlobalInfo.m_nShifted < g_GlobalInfo.dtTicks) {
 		g_GlobalInfo.m_nShifted++;
-		g_GlobalInfo.m_nWaitForShift = DT_WAIT_CALLS;
+		g_GlobalInfo.m_nWaitForShift = DT_WAIT_CALLS;	
 		return; // Don't move
 	}
 	else {
@@ -42,14 +46,14 @@ void __cdecl EngineHook::CL_Move::Hook(float accumulated_extra_samples, bool bFi
 		g_GlobalInfo.m_bShouldShift = g_GlobalInfo.m_bShouldShift ? true : g_GlobalInfo.lateUserCmd->buttons & IN_ATTACK;
 	}
 
-	const auto& pLocal = g_EntityCache.m_pLocal;
+
 
 	if (!pLocal) {
 		return;
 	}
 
 	if (g_GlobalInfo.m_bShouldShift) {
-		if	(
+		if (
 			(Vars::Misc::CL_Move::DTMode.m_Var == 0 && GetAsyncKeyState(Vars::Misc::CL_Move::DoubletapKey.m_Var)) ||	// 0 - On key
 			(Vars::Misc::CL_Move::DTMode.m_Var == 1) ||																	// 1 - Always
 			(Vars::Misc::CL_Move::DTMode.m_Var == 2 && !GetAsyncKeyState(Vars::Misc::CL_Move::DoubletapKey.m_Var)))		// 2 - Disable on key 

@@ -952,7 +952,7 @@ void CWhat::Render(IDirect3DDevice9* pDevice) {
 								ImGui::Checkbox("Enable Steam RPC", &Vars::Misc::Steam::EnableRPC.m_Var); HelpMarker("Enable Steam Rich Presence");
 								const char* matchGroups[]{ "Special Event", "MvM Mann Up", "Competitive", "Casual", "MvM Boot Camp" }; ImGui::PushItemWidth(150); ImGui::Combo("Match group", &Vars::Misc::Steam::MatchGroup.m_Var, matchGroups, IM_ARRAYSIZE(matchGroups)); ImGui::PopItemWidth(); HelpMarker("Which match group should be used?");
 								ImGui::Checkbox("Override in menu", &Vars::Misc::Steam::OverrideMenu.m_Var); HelpMarker("Override match group to \"Main Menu\" when in main menu");
-								const char* mapTexts[]{ "Fedoraware", "ChadAlphaMales.club", "Meowhook.club", "Rathook.cc", "Nitro.tf", "custom" }; ImGui::PushItemWidth(150); ImGui::Combo("Map text", &Vars::Misc::Steam::MapText.m_Var, mapTexts, IM_ARRAYSIZE(mapTexts)); ImGui::PopItemWidth(); HelpMarker("Which map text should be used?");
+								const char* mapTexts[]{ "Fedoraware", "Figoraware", "Meowhook.club", "Rathook.cc", "Nitro.tf", "custom" }; ImGui::PushItemWidth(150); ImGui::Combo("Map text", &Vars::Misc::Steam::MapText.m_Var, mapTexts, IM_ARRAYSIZE(mapTexts)); ImGui::PopItemWidth(); HelpMarker("Which map text should be used?");
 								ImGui::PushItemWidth(100); ImGui::InputText("Custom map text", &Vars::Misc::Steam::CustomText); ImGui::PopItemWidth(); HelpMarker("For when \"custom\" is selcted in \"Map text\". Sets custom map text.");
 								ImGui::InputInt("Group size", &Vars::Misc::Steam::GroupSize.m_Var); HelpMarker("Sets party size");
 							}
@@ -984,23 +984,30 @@ void CWhat::Render(IDirect3DDevice9* pDevice) {
 									"Cool",
 									"Energy orb"
 								};
+								const char* unuEffects2[]{
+									"None",
+									"Hot",
+									"Isotope",
+									"Cool",
+									"Energy orb"
+								};
 								ImGui::PushItemWidth(100);
 								if (ImGui::Combo("Unusual effect 1", &unu1, unuEffects, IM_ARRAYSIZE(unuEffects))) {
 									switch (unu1) {
 									case 0:
-										Vars::Visuals::Skins::Effect.m_Var = 0;
+										Vars::Visuals::Skins::Particle.m_Var = 0;
 										break;
 									case 1:
-										Vars::Visuals::Skins::Effect.m_Var = 701;
+										Vars::Visuals::Skins::Particle.m_Var = 701;
 										break;
 									case 2:
-										Vars::Visuals::Skins::Effect.m_Var = 702;
+										Vars::Visuals::Skins::Particle.m_Var = 702;
 										break;
 									case 3:
-										Vars::Visuals::Skins::Effect.m_Var = 703;
+										Vars::Visuals::Skins::Particle.m_Var = 703;
 										break;
 									case 4:
-										Vars::Visuals::Skins::Effect.m_Var = 704;
+										Vars::Visuals::Skins::Particle.m_Var = 704;
 										break;
 									default:
 										break;
@@ -1009,7 +1016,7 @@ void CWhat::Render(IDirect3DDevice9* pDevice) {
 								ImGui::PopItemWidth();
 								HelpMarker("The first unusual effect to be applied to the weapon");
 								ImGui::PushItemWidth(100);
-								if (ImGui::Combo("Unusual effect 2", &unu2, unuEffects, IM_ARRAYSIZE(unuEffects))) {
+								if (ImGui::Combo("Unusual effect 2", &unu2, unuEffects2, IM_ARRAYSIZE(unuEffects2))) {
 									switch (unu2) {
 									case 0:
 										Vars::Visuals::Skins::Effect.m_Var = 0;
@@ -1058,6 +1065,13 @@ void CWhat::Render(IDirect3DDevice9* pDevice) {
 									g_AttributeChanger.m_bLoad = true;
 								}
 
+							}
+
+							if (ImGui::CollapsingHeader(_("Body part scales"))) {
+								ImGui::Checkbox(_("Body part scales switch"), &Vars::ESP::Players::Funnybodypartslol.m_Var);
+								ImGui::PushItemWidth(100); ImGui::SliderFloat(_("Head scale"), &Vars::ESP::Players::Headscale.m_Var, -180.f, 180.f, _("%.0f"), 1.0f); ImGui::PopItemWidth(); HelpMarker(_("How many degrees the aimbot's FoV will have"));
+								ImGui::PushItemWidth(100); ImGui::SliderFloat(_("Body scale"), &Vars::ESP::Players::Torsoscale.m_Var, -180.0f, 180.f, _("%.0f"), 1.0f); ImGui::PopItemWidth(); HelpMarker(_("How many degrees the aimbot's FoV will have"));
+								ImGui::PushItemWidth(100); ImGui::SliderFloat(_("Hand scale"), &Vars::ESP::Players::Handscale.m_Var, -180.0f, 180.f, _("%.0f"), 1.0f); ImGui::PopItemWidth(); HelpMarker(_("How many degrees the aimbot's FoV will have"));
 							}
 						}
 						ImGui::NextColumn();
