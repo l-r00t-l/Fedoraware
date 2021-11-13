@@ -462,7 +462,7 @@ void CConfigManager::Save(const wchar_t *name)
 			SAVE_VAR(Vars::Visuals::RemoveZoom);
 			SAVE_VAR(Vars::Visuals::RemovePunch);
 			SAVE_VAR(Vars::Visuals::CrosshairAimPos);
-			SAVE_VAR(Vars::Visuals::ClassChangesLogger);
+			SAVE_VAR(Vars::Visuals::ChatInfo);
 
 			SAVE_VAR(Vars::Visuals::SpectatorList);
 
@@ -957,7 +957,7 @@ void CConfigManager::Load(const wchar_t *name)
 			LOAD_VAR(Vars::Visuals::RemoveZoom);
 			LOAD_VAR(Vars::Visuals::RemovePunch);
 			LOAD_VAR(Vars::Visuals::CrosshairAimPos);
-			LOAD_VAR(Vars::Visuals::ClassChangesLogger);
+			LOAD_VAR(Vars::Visuals::ChatInfo);
 
 			LOAD_VAR(Vars::Visuals::SpectatorList);
 

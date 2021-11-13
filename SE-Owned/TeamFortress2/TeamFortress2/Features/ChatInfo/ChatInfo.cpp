@@ -14,6 +14,7 @@ void CChatInfo::Event(CGameEvent* pEvent, const FNV1A_t uNameHash) {
 		return;
 
 	if (const auto pLocal = g_EntityCache.m_pLocal) {
+		if (Vars::Visuals::ChatInfo.m_Var) {
 			if (Vars::Misc::VoteRevealer.m_Var && uNameHash == FNV1A::HashConst("vote_cast")) {
 				const auto pEntity = g_Interfaces.EntityList->GetClientEntity(pEvent->GetInt("entityid"));
 				if (pEntity && pEntity->IsPlayer()) {
@@ -28,7 +29,7 @@ void CChatInfo::Event(CGameEvent* pEvent, const FNV1A_t uNameHash) {
 				}
 			}
 
-			if (Vars::Visuals::ClassChangesLogger.m_Var && uNameHash == FNV1A::HashConst("player_changeclass")) {
+			if (uNameHash == FNV1A::HashConst("player_changeclass")) {
 				if (const auto& pEntity = g_Interfaces.EntityList->GetClientEntity(g_Interfaces.Engine->GetPlayerForUserID(pEvent->GetInt("userid")))) {
 					int nIndex = pEntity->GetIndex();
 
@@ -39,10 +40,10 @@ void CChatInfo::Event(CGameEvent* pEvent, const FNV1A_t uNameHash) {
 				}
 			}
 
-			if (Vars::Visuals::ClassChangesLogger.m_Var && uNameHash == FNV1A::HashConst("player_connect")) {
+			if (uNameHash == FNV1A::HashConst("player_connect")) {
 				g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(GET_INDEX_USERID(pEvent->GetInt(_("userid"))), tfm::format("\x3%s\x1 connected. (%s)", pEvent->GetString("name"), pEvent->GetString("address")).c_str());
 			}
-		
+		}
 
 		if (Vars::Visuals::damageLogger.m_Var && uNameHash == FNV1A::HashConst("player_hurt")) {
 			if (const auto pEntity = g_Interfaces.EntityList->GetClientEntity(g_Interfaces.Engine->GetPlayerForUserID(pEvent->GetInt("userid")))) {
@@ -69,7 +70,7 @@ void CChatInfo::Event(CGameEvent* pEvent, const FNV1A_t uNameHash) {
 				const wchar_t* wcattackString = wattackString.c_str();
 				g_Interfaces.Surface->GetTextSize(g_Draw.m_vecFonts[FONT_INDICATORS].dwFont, wcattackString, attackStringW, attackStringH);
 
-				if (Vars::Visuals::damageLogger.m_Var == 1 && Vars::Visuals::ClassChangesLogger.m_Var)
+				if (Vars::Visuals::damageLogger.m_Var == 1 && Vars::Visuals::ChatInfo.m_Var)
 					g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(0, tfm::format("\x4[FeD]\x3 %s", attackString.c_str()).c_str());
 
 				if (Vars::Visuals::damageLogger.m_Var == 2)
@@ -87,7 +88,7 @@ void CChatInfo::Event(CGameEvent* pEvent, const FNV1A_t uNameHash) {
 			PlayerInfo_t info;
 			if (g_Interfaces.Engine->GetPlayerInfo(player, &info) && (achievement == 0xCA7 || achievement == 0xCA8) && pLocal->GetIndex() != player) {
 				if (m_known_bots.find(info.friendsID) == m_known_bots.end()) {
-					if (Vars::Visuals::ClassChangesLogger.m_Var)
+					if (Vars::Visuals::ChatInfo.m_Var)
 						g_Interfaces.ClientMode->m_pChatElement->ChatPrintf(player, tfm::format("\x4[FeD] \x3 %s\x1 is a bot!", info.name).c_str());
 					
 					{ // marked by other bots. r.i.p cl_drawline :(
